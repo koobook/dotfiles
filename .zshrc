@@ -8,6 +8,7 @@
 
 ###--export--###
 export LANG=ja_JP.UTF-8 # 文字コードをUTF-8に設定
+export EDITOR=vim
 
 ###--setopt--###
 setopt IGNOREEOF # Ctrl+Dでログアウトしてしまうことを防ぐ
@@ -18,6 +19,7 @@ setopt auto_pushd # cd時にディレクトリスタックにpushdする
 setopt pushd_ignore_dups
 setopt correct # コマンドのスペルを訂正する
 setopt no_flow_control # Ctrl+sのロック, Ctrl+qのロック解除を無効にする
+setopt brace_ccl # 例 : mkdir {1-3} で フォルダ1, 2, 3を作れる
 
 ###--history--###
 HISTFILE=~/.zsh_history # ヒストリーファイル
@@ -25,20 +27,19 @@ HISTSIZE=10000 # ヒストリーのサイズ
 SAVEHIST=10000 # 保存するヒストリーの数
 
 ###--alias--###
-# グローバルエイリアス
+# global alias
 alias -g L='| less'
 alias -g H='| head'
 alias -g G='| grep'
 alias -g GI='| grep -ri'
-# エイリアス
-alias lst='ls -ltr'
-alias l='ls -ltr'
-alias la='ls -a'
-alias ll='ls -l'
+# other alias
+alias lst='ls -ltrG'
+alias l='ls -ltrG'
+alias la='ls -AG'
+alias ll='ls -lG'
 alias so='source'
 alias v='vim'
 alias c='cdr'
-# historyに日付を表示
 alias h='fc -lt '%F %T' 1'
 alias cp='cp -i'
 alias rm='rm -i'
@@ -55,8 +56,8 @@ colors
 
 ###--prompt--###
 PROMPT="
-%{$fg[magenta]%}%~%{$reset_color%} [%{$fg[cyan]%}%m%{$reset_color%}]
-> "
+%{$fg[magenta]%}%~%{$reset_color%} %{$fg[white]%}[%{$reset_color%}%{$fg[cyan]%}%m%{$reset_color%}%{$fg[white]%}]%{$reset_color%}
+%{$fg[yellow]%}>>>%{$reset_solor%} "
 
 ###--completion--###
 # 補完
@@ -73,9 +74,18 @@ zle -N history-beginning-search-backward-end history-search-end
 zle -N history-beginning-search-forward-end history-search-end
 bindkey "^p" history-beginning-search-backward-end
 bindkey "^b" history-beginning-search-forward-end
+zstyle ':completion:*' completer _complete _match _approximate
+zstyle ':completion:*' group-name ''
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+zstyle ':completion:*' use-cache true
+zstyle ':completion:*' verbose yes
+zstyle ':completion:*:default' menu select=2
+zstyle ':completion:*:descriptions' format '%F{yellow}-- %d --%f'
+zstyle ':completion:*:options' description 'y'
 
 ###--function--###
-chpwd() { ls -lA} # cdの後にls -lAを実行
+chpwd() { ls -lAG} # cdの後にls -lAを実行
 
 function mkcd() { # mkdirとcdを同時実行
   if [[ -d $1 ]]; then
