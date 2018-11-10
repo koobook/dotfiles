@@ -1,58 +1,40 @@
-# Ctrl+Dでログアウトしてしまうことを防ぐ
-setopt IGNOREEOF
+#            _
+#     _______| |__  _ __ ___
+#    |_  / __| '_ \| '__/ __|
+#   _ / /\__ \ | | | | | (__
+#  (_)___|___/_| |_|_|  \___|
+#
+#
 
-# 日本語を使用
-export LANG=ja_JP.UTF-8
+###--export--###
+export LANG=ja_JP.UTF-8 # 文字コードをUTF-8に設定
 
-# パスを追加したい場合
-export PATH="$HOME/bin:$PATH"
-
-# 色を使用
-autoload -Uz colors
-colors
-
-# 補完
-autoload -Uz compinit
-compinit
-
-# emacsキーバインド
-bindkey -e
-
-# 他のターミナルとヒストリーを共有
-setopt share_history
-
-# ヒストリーに重複を表示しない
-setopt histignorealldups
-
-HISTFILE=~/.zsh_history
-HISTSIZE=10000
-SAVEHIST=10000
-
-# cdコマンドを省略して、ディレクトリ名のみの入力で移動
-setopt auto_cd
-
-# 自動でpushdを実行
-setopt auto_pushd
-
-# pushdから重複を削除
+###--setopt--###
+setopt IGNOREEOF # Ctrl+Dでログアウトしてしまうことを防ぐ
+setopt share_history # 他のシェルのヒストリをリアルタイムで共有する
+setopt histignorealldups # ヒストリーに重複を表示しない
+setopt auto_cd # ディレクトリ名の入力のみでcd
+setopt auto_pushd # cd時にディレクトリスタックにpushdする
 setopt pushd_ignore_dups
+setopt correct # コマンドのスペルを訂正する
+setopt no_flow_control # Ctrl+sのロック, Ctrl+qのロック解除を無効にする
 
-# コマンドミスを修正
-setopt correct
+###--history--###
+HISTFILE=~/.zsh_history # ヒストリーファイル
+HISTSIZE=10000 # ヒストリーのサイズ
+SAVEHIST=10000 # 保存するヒストリーの数
 
-
+###--alias--###
 # グローバルエイリアス
 alias -g L='| less'
 alias -g H='| head'
 alias -g G='| grep'
 alias -g GI='| grep -ri'
-
-
 # エイリアス
-alias lst='ls -ltr --color=auto'
-alias l='ls -ltr --color=auto'
-alias la='ls -A --color=auto'
-alias ll='ls -l --color=auto'
+alias lst='ls -ltr'
+alias l='ls -ltr'
+alias la='ls -a'
+alias ll='ls -l'
 alias so='source'
 alias v='vim'
 alias c='cdr'
@@ -65,39 +47,25 @@ alias ..='c ../'
 alias back='pushd'
 alias diff='diff -U1'
 
-# backspace,deleteキーを使えるように
-stty erase ^H
-bindkey "^[[3~" delete-char
+###--color--###
+autoload -Uz colors
+colors
 
-# cdの後にlsを実行
-chpwd() { ls -ltr --color=auto }
+###--bindkey--###
 
-# どこからでも参照できるディレクトリパス
-cdpath=(~)
+###--prompt--###
+PROMPT="
+%{$fg[red]%}%~%{$reset_color%} [%{$fg[cyan]%}%m%{$reset_color%}]
+> "
 
-# 区切り文字の設定
-autoload -Uz select-word-style
-select-word-style default
-zstyle ':zle:*' word-chars "_-./;@"
-zstyle ':zle:*' word-style unspecified
-
-# Ctrl+sのロック, Ctrl+qのロック解除を無効にする
-setopt no_flow_control
-
-# プロンプトを2行で表示、時刻を表示
-PROMPT="%(?.%{${fg[green]}%}.%{${fg[red]}%})%n${reset_color}@${fg[blue]}%m${reset_color}(%*%) %~
-%# "
-
+###--completion--###
+# 補完
+autoload -Uz compinit
+compinit
 # 補完後、メニュー選択モードになり左右キーで移動が出来る
 zstyle ':completion:*:default' menu select=2
-
 # 補完で大文字にもマッチ
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
-
-# Ctrl+rでヒストリーのインクリメンタルサーチ、Ctrl+sで逆順
-bindkey '^r' history-incremental-pattern-search-backward
-bindkey '^s' history-incremental-pattern-search-forward
-
 # コマンドを途中まで入力後、historyから絞り込み
 # 例 ls まで打ってCtrl+pでlsコマンドをさかのぼる、Ctrl+bで逆順
 autoload -Uz history-search-end
@@ -106,20 +74,10 @@ zle -N history-beginning-search-forward-end history-search-end
 bindkey "^p" history-beginning-search-backward-end
 bindkey "^b" history-beginning-search-forward-end
 
-# cdrコマンドを有効 ログアウトしても有効なディレクトリ履歴
-# cdr タブでリストを表示
-autoload -Uz add-zsh-hook
-autoload -Uz chpwd_recent_dirs cdr
-add-zsh-hook chpwd chpwd_recent_dirs
-# cdrコマンドで履歴にないディレクトリにも移動可能に
-zstyle ":chpwd:*" recent-dirs-default true
+###--function--###
+chpwd() { ls -lA} # cdの後にls -lAを実行
 
-# 複数ファイルのmv 例　zmv *.txt *.txt.bk
-autoload -Uz zmv
-alias zmv='noglob zmv -W'
-
-# mkdirとcdを同時実行
-function mkcd() {
+function mkcd() { # mkdirとcdを同時実行
   if [[ -d $1 ]]; then
     echo "$1 already exists!"
     cd $1
@@ -128,8 +86,14 @@ function mkcd() {
   fi
 }
 
-# git設定
-RPROMPT="%{${fg[blue]}%}[%~]%{${reset_color}%}"
+function command_not_found_handler(){ # コマンドミス時
+    echo -e     "\e[31m               __      ___                       __ \n" \
+                ".-----.-----.|  |_  .'  _|.-----.--.--.-----.--|  |\n" \
+                "|     |  _  ||   _| |   _||  _  |  |  |     |  _  |\n" \
+                "|__|__|_____||____| |__|  |_____|_____|__|__|_____|\n"
+}
+
+###--git--###
 autoload -Uz vcs_info
 setopt prompt_subst
 zstyle ':vcs_info:git:*' check-for-changes true
@@ -138,4 +102,4 @@ zstyle ':vcs_info:git:*' unstagedstr "%F{red}+"
 zstyle ':vcs_info:*' formats "%F{green}%c%u[%b]%f"
 zstyle ':vcs_info:*' actionformats '[%b|%a]'
 precmd () { vcs_info }
-RPROMPT=$RPROMPT'${vcs_info_msg_0_}'
+RPROMPT="${vcs_info_msg_0_}"
