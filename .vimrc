@@ -34,6 +34,8 @@ set expandtab " Tab文字を半角スペースにする
 set tabstop=3 " 行頭以外のTab文字の表示幅
 set shiftwidth=3 " 行頭でのTab文字の表示幅
 set wildmode=list:longest " コマンドラインの補完
+set cursorline " 現在の行を強調表示
+set cursorcolumn " 現在の行を強調表示（縦）
 
 " statusline
 set statusline=%F " ファイル名表示
@@ -44,3 +46,11 @@ set statusline+=%w " プレビューウインドウなら[Prevew]と表示
 set statusline+=%= " これ以降は右寄せ表示
 set statusline+=%l/%L " 現在行数/全行数
 set laststatus=2 " ステータスラインを常に表示(0:表示しない、1:2つ以上ウィンドウがある時だけ表示)
+
+
+call plug#begin('~/.vim/plugged')
+
+Plug 'altercation/vim-colors-solarized' " solarized
+Plug 'scrooloose/nerdtree'
+
+call plug#end()

@@ -55,7 +55,7 @@ colors
 
 ###--prompt--###
 PROMPT="
-%{$fg[red]%}%~%{$reset_color%} [%{$fg[cyan]%}%m%{$reset_color%}]
+%{$fg[magenta]%}%~%{$reset_color%} [%{$fg[cyan]%}%m%{$reset_color%}]
 > "
 
 ###--completion--###
