@@ -9,6 +9,7 @@
 ###--export--###
 export LANG=ja_JP.UTF-8 # 文字コードをUTF-8に設定
 export EDITOR=vim
+export PATH="/anaconda3/bin:$PATH"
 
 ###--setopt--###
 setopt IGNOREEOF # Ctrl+Dでログアウトしてしまうことを防ぐ
@@ -22,17 +23,15 @@ setopt no_flow_control # Ctrl+sのロック, Ctrl+qのロック解除を無効�
 setopt brace_ccl # 例 : mkdir {1-3} で フォルダ1, 2, 3を作れる
 
 ###--history--###
-HISTFILE=~/.zsh_history # ヒストリーファイル
-HISTSIZE=10000 # ヒストリーのサイズ
-SAVEHIST=10000 # 保存するヒストリーの数
+HISTFILE=~/.zsh_history
+HISTSIZE=10000
+SAVEHIST=10000
 
 ###--alias--###
-# global alias
 alias -g L='| less'
 alias -g H='| head'
 alias -g G='| grep'
 alias -g GI='| grep -ri'
-# other alias
 alias lst='ls -ltrG'
 alias l='ls -ltrG'
 alias la='ls -AG'
@@ -51,8 +50,6 @@ alias diff='diff -U1'
 ###--color--###
 autoload -Uz colors
 colors
-
-###--bindkey--###
 
 ###--prompt--###
 PROMPT="
@@ -85,9 +82,9 @@ zstyle ':completion:*:descriptions' format '%F{yellow}-- %d --%f'
 zstyle ':completion:*:options' description 'y'
 
 ###--function--###
-chpwd() { ls -lAG} # cdの後にls -lAを実行
+chpwd() { ls -lAG} # after 'cd', run 'ls -lAG'
 
-function mkcd() { # mkdirとcdを同時実行
+function mkcd() { # run concurrently 'mkdir' and 'cd'
   if [[ -d $1 ]]; then
     echo "$1 already exists!"
     cd $1
@@ -96,7 +93,7 @@ function mkcd() { # mkdirとcdを同時実行
   fi
 }
 
-function command_not_found_handler(){ # コマンドミス時
+function command_not_found_handler(){ # if you make a typo...
     echo -e     "\e[31m               __      ___                       __ \n" \
                 ".-----.-----.|  |_  .'  _|.-----.--.--.-----.--|  |\n" \
                 "|     |  _  ||   _| |   _||  _  |  |  |     |  _  |\n" \

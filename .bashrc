@@ -1,4 +1,5 @@
 stty stop undef
+export PATH=~/anaconda3/bin:$PATH
 
 alias ls='ls -CF'
 alias ll='ls -AlFh --show-control-chars --color=auto'
