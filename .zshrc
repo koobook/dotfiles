@@ -54,7 +54,7 @@ colors
 ###--prompt--###
 PROMPT="
 %{$fg[magenta]%}%~%{$reset_color%} %{$fg[white]%}[%{$reset_color%}%{$fg[cyan]%}%m%{$reset_color%}%{$fg[white]%}]%{$reset_color%}
-%{$fg[yellow]%}>>>%{$reset_solor%} "
+%{$fg[yellow]%}>>>%{$reset_color%} "
 
 ###--completion--###
 # 補完
