@@ -1,6 +1,7 @@
 export PS1='> '
 
 export PATH="/anaconda3/bin:$PATH"
+export PATH="$PATH:/flutter/bin"
 export PAGER='/usr/bin/lv -c'
 export EDITOR='/usr/bin/vim'
 export HISTSIZE=100000

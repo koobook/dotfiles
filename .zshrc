@@ -9,7 +9,13 @@
 ###--export--###
 export LANG=ja_JP.UTF-8 # 文字コードをUTF-8に設定
 export EDITOR=vim
-export PATH="/anaconda3/bin:$PATH"
+export PATH="$PATH:/Users/akira/flutter/bin"
+export PATH="$PATH:/Users/akira/.nodebrew/current/bin"
+export PATH="$PATH:/opt/homebrew/bin"
+export NVM_DIR="$HOME/.nvm"
+
+[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
+[ -s "opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
 
 ###--setopt--###
 setopt IGNOREEOF # Ctrl+Dでログアウトしてしまうことを防ぐ
@@ -46,6 +52,7 @@ alias mkdir='mkdir -p'
 alias ..='c ../'
 alias back='pushd'
 alias diff='diff -U1'
+alias connect-ec2='ssh -i "~/aws-key/task-agency-matching.pem" ubuntu@ec2-35-78-94-173.ap-northeast-1.compute.amazonaws.com'
 
 ###--color--###
 autoload -Uz colors
@@ -94,10 +101,7 @@ function mkcd() { # run concurrently 'mkdir' and 'cd'
 }
 
 function command_not_found_handler(){ # if you make a typo...
-    echo -e     "\e[31m               __      ___                       __ \n" \
-                ".-----.-----.|  |_  .'  _|.-----.--.--.-----.--|  |\n" \
-                "|     |  _  ||   _| |   _||  _  |  |  |     |  _  |\n" \
-                "|__|__|_____||____| |__|  |_____|_____|__|__|_____|\n"
+  echo -e "\e[31m$(<~/error-msg)"
 }
 
 ###--git--###
@@ -110,3 +114,15 @@ zstyle ':vcs_info:*' formats "%F{green}%c%u[%b]%f"
 zstyle ':vcs_info:*' actionformats '[%b|%a]'
 precmd () { vcs_info }
 RPROMPT="${vcs_info_msg_0_}"
+
+
+###--tmux--###
+if [[ ! -n $TMUX ]]; then
+  # get the IDs
+  ID="`tmux list-sessions`"
+  if [[ -z "$ID" ]]; then
+    tmux new-session
+  fi
+  ID="`echo $ID | $PERCOL | cut -d: -f1`"
+  tmux attach-session -t "$ID"
+fi
